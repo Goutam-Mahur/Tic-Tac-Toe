@@ -2,7 +2,7 @@
   "name": "tic-tac-toe",
   "private": true,
   "version": "0.0.0",
-"homepage": "https://Goutam-Mahur.github.io/Tic-Tac-Toe/"
+  "homepage": "https://goutam-mahur.github.io/tic-tac-toe/,
   "type": "module",
   "scripts": {
     "dev": "vite",
