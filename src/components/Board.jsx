@@ -1,7 +1,7 @@
 import React from "react";
 import Square from "./Square";
 
-const Board = ({ isXTurn, board, onPlay }) => {
+const Board = ({ isXTurn, board, onPlay}) => {
   const handleClick = (index) => {
     if (calculateWinner(board) || board[index]) {
       return;
@@ -34,13 +34,18 @@ const Board = ({ isXTurn, board, onPlay }) => {
   };
 
   const winner = calculateWinner(board);
+  const isDraw = !winner && board.every(square => square !== null);
   return (
     <div className="flex flex-col items-center mt-5">
-      {!winner && (
-        <div className="h-10 ">player {isXTurn ? "X" : "O"} turn</div>
+      {!winner && !isDraw && (
+        <div className="text-xl h-10 ">player {isXTurn ? "X" : "O"} turn</div>
       )}
 
-      {winner && <div className=" font-medium h-10">{winner} won the game</div>}
+      {isDraw && (
+        <div className="text-2xl text-red-500 h-10">Draw</div>
+      )}
+
+      {winner && <div className="text-2xl text-green-500 h-10">{winner} wins</div>}
 
       <div className="flex flex-row">
         <Square value={board[0]} onClick={() => handleClick(0)} />
