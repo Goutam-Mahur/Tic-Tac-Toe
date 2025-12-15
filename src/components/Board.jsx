@@ -1,9 +1,18 @@
-import React from "react";
 import Square from "./Square";
+import { LINES, getWinner } from "../minimax/Minimax";
 
-const Board = ({ isXTurn, board, onPlay}) => {
+const Board = ({ isXTurn, board, onPlay }) => {
+  const getWinningLine = (board) => {
+    for (const [a, b, c] of LINES) {
+      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        return [a, b, c];
+      }
+    }
+    return [];
+  };
+
   const handleClick = (index) => {
-    if (calculateWinner(board) || board[index]) {
+    if (getWinner(board) || board[index]) {
       return;
     }
 
@@ -12,58 +21,40 @@ const Board = ({ isXTurn, board, onPlay}) => {
     onPlay(newBoard);
   };
 
-  const calculateWinner = (board) => {
-    const winnerLogic = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-    ];
+  const winner = getWinner(board);
+  const winningLine = winner ? getWinningLine(board) : [];
+  const isDraw = winner == "draw";
+  const rows = [0, 1, 2];
 
-    for (let row of winnerLogic) {
-      const [a, b, c] = row;
-      if (board[a] !== null && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
-      }
-    }
-    return false;
-  };
-
-  const winner = calculateWinner(board);
-  const isDraw = !winner && board.every(square => square !== null);
   return (
-    <div className="flex flex-col items-center mt-5">
+    <div className="flex flex-col items-center mt-5 gap-1">
       {!winner && !isDraw && (
-        <div className="text-xl h-10 ">player {isXTurn ? "X" : "O"} turn</div>
+        <div className="text-2xl h-10 text-white font-bold">
+          player {isXTurn ? "X" : "O"} turn
+        </div>
       )}
 
-      {isDraw && (
-        <div className="text-2xl text-red-500 h-10">Draw</div>
+      {isDraw && <div className="text-2xl text-white font-bold h-10">Draw</div>}
+
+      {winner && !isDraw && (
+        <div className="text-2xl text-white font-bold h-10">{winner} wins</div>
       )}
 
-      {winner && <div className="text-2xl text-green-500 h-10">{winner} wins</div>}
-
-      <div className="flex flex-row">
-        <Square value={board[0]} onClick={() => handleClick(0)} />
-        <Square value={board[1]} onClick={() => handleClick(1)} />
-        <Square value={board[2]} onClick={() => handleClick(2)} />
-      </div>
-
-      <div className="flex flex-row">
-        <Square value={board[3]} onClick={() => handleClick(3)} />
-        <Square value={board[4]} onClick={() => handleClick(4)} />
-        <Square value={board[5]} onClick={() => handleClick(5)} />
-      </div>
-
-      <div className="flex flex-row">
-        <Square value={board[6]} onClick={() => handleClick(6)} />
-        <Square value={board[7]} onClick={() => handleClick(7)} />
-        <Square value={board[8]} onClick={() => handleClick(8)} />
-      </div>
+      {rows.map((row) => (
+        <div key={row} className="flex flex-row gap-1">
+          {[0, 1, 2].map((col) => {
+            const index = row * 3 + col;
+            return (
+              <Square
+                key={index}
+                value={board[index]}
+                isWinning={winningLine.includes(index)}
+                onClick={() => handleClick(index)}
+              />
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 };
